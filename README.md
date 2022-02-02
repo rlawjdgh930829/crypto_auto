@@ -2,7 +2,8 @@
 Python 3.8
 
  ## 테스트
- - 업비트(https://upbit.com/service_center/open_api_guide) Open API Key 발급
+ - 업비트(https://upbit.com/service_center/open_api_guide) Open API
+ - 자산조회, 주문조회, 주문하기 체크 후 Open API Key 발급
  - test.py를 본인의 Key값으로 변경
  - test.py를 실행
 
