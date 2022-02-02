@@ -25,4 +25,4 @@ Python 3.8
  - Bot Token Scopes 메뉴의 Add an OAuth Scope를 클릭하여 chat:write 권한을 부여
  - OAuth Tokens & Redirect URLs 메뉴의 Install to Workspace을 클릭하여 권한 부여
  - Bot User OAuth Token을 복사하여 tradinghot.py의 myToken값을 변경
- - tradinghot.py의 myWorkspace값을 생선한 워크스페이스으로 변경
+ - tradinghot.py의 myWorkspace값을 생성한 워크스페이스 이름으로 변경
