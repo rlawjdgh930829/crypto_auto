@@ -2,13 +2,23 @@ import time
 import pyupbit
 import datetime
 import schedule
+import requests
 from fbprophet import Prophet
 
-access = "your-access"          # 본인 값으로 변경
-secret = "your-secret"          # 본인 값으로 변경
+access = "your-access"               # 본인 값으로 변경
+secret = "your-secret"               # 본인 값으로 변경
+myToken = "xoxb-your-token"          # 본인 값으로 변경
+myWorkspace = "#your-workspace-name" # 본인 값으로 변경
+
+def post_message(token, channel, text):
+    """슬랙 메시지 전송"""
+    response = requests.post("https://slack.com/api/chat.postMessage",
+        headers={"Authorization": "Bearer "+token},
+        data={"channel": channel,"text": text}
+    )
 
 def get_target_price(ticker, k):
-    """변동성 돌파 전략으로 매수 목표가 조회"""
+    """변동성 돌파 전략으로 매수 목표 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="day", count=2)
     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
     return target_price
@@ -36,7 +46,7 @@ def get_current_price(ticker):
 
 predicted_close_price = 0
 def predict_price(ticker):
-    """Prophet으로 당일 종가 가격 예측"""
+    """prophet으로 당일 종가 가격 예측"""
     global predicted_close_price
     df = pyupbit.get_ohlcv(ticker, interval="minute60")
     df = df.reset_index()
@@ -57,7 +67,10 @@ schedule.every().hour.do(lambda: predict_price("KRW-ETH"))
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
-print("autotrade start")
+print("trading start")
+
+# 시작 메시지 전송
+post_message(myToken, myWorkspace, "trading start")
 
 # 매매 시작
 while True:
@@ -73,12 +86,15 @@ while True:
             if target_price < current_price and current_price < predicted_close_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-ETH", krw*0.9995)
+                    buy_result = upbit.buy_market_order("KRW-ETH", krw*0.9995)
+                    post_message(myToken,"#crypto", "buy : " +str(buy_result))
         else:
             eth = get_balance("ETH")
             if eth > 0.00150:
-                upbit.sell_market_order("KRW-ETH", eth*1)
+                sell_result = upbit.sell_market_order("KRW-ETH", eth*1)
+                post_message(myToken,"#crypto", "sell : " +str(sell_result))
         time.sleep(1)
     except Exception as e:
         print(e)
+        post_message(myToken,"#crypto", e)
         time.sleep(1)
