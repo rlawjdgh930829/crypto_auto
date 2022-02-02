@@ -1,3 +1,6 @@
+## 소개
+pyupbit(https://github.com/sharebook-kr/pyupbit) 라이브러리를 이용하여 upbit 거래소에서 가상화폐를 자동매매
+
 ## 언어
 Python 3.8
 
